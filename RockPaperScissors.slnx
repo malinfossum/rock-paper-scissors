@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="RockPaperScissors.Console/RockPaperScissors.Console.csproj" />
+  <Project Path="RockPaperScissors.Core/RockPaperScissors.Core.csproj" />
+  <Project Path="RockPaperScissors.Tests/RockPaperScissors.Tests.csproj" />
+</Solution>
