@@ -23,13 +23,13 @@ internal static class Program
         while (true)
         {
             SafeClear();
-            WriteLine("=== Stein, Saks, Papir ===\n");
-            WriteLine("Velg modus:");
-            WriteLine("  1) Uendelig (spill til du avslutter)");
-            WriteLine("  2) Best av 5 (først til 3 seire)");
-            WriteLine("  3) Best av 7 (først til 4 seire)");
-            WriteLine("  4) Avslutt\n");
-            Write("Valg: ");
+            WriteLine("=== Rock, Paper, Scissors ===\n");
+            WriteLine("Choose mode:");
+            WriteLine("  1) Endless (play until you quit)");
+            WriteLine("  2) Best of 5 (first to 3 wins)");
+            WriteLine("  3) Best of 7 (first to 4 wins)");
+            WriteLine("  4) Quit\n");
+            Write("Choice: ");
 
             switch (ReadLine()?.Trim())
             {
@@ -38,8 +38,8 @@ internal static class Program
                 case "3": return 4;
                 case "4": return null;
                 default:
-                    WriteWithColor("Ugyldig valg. Prøv igjen.", ConsoleColor.Yellow);
-                    WriteLine("\nTrykk en tast for å fortsette...");
+                    WriteWithColor("Invalid choice. Try again.", ConsoleColor.Yellow);
+                    WriteLine("\nPress any key to continue...");
                     ReadKey(intercept: true);
                     break;
             }
@@ -52,16 +52,16 @@ internal static class Program
         {
             SafeClear();
             ShowScoreboard(session, targetWins);
-            WriteLine("\n  1) Stein\n  2) Saks\n  3) Papir\n  4) Avslutt\n");
-            Write("Valg: ");
+            WriteLine("\n  1) Rock\n  2) Paper\n  3) Scissors\n  4) Quit\n");
+            Write("Choice: ");
 
             var input = ReadLine()?.Trim();
             if (input == "4") return;
 
             if (!TryParseChoice(input, out var playerChoice))
             {
-                WriteWithColor("Ugyldig valg — bruk 1, 2, 3 eller 4.", ConsoleColor.Yellow);
-                WriteLine("\nTrykk en tast for å fortsette...");
+                WriteWithColor("Invalid choice — use 1, 2, 3 or 4.", ConsoleColor.Yellow);
+                WriteLine("\nPress any key to continue...");
                 ReadKey(intercept: true);
                 continue;
             }
@@ -69,7 +69,7 @@ internal static class Program
             var round = session.PlayRound(playerChoice);
             ShowRoundResult(round);
 
-            WriteLine("\nTrykk en tast for å fortsette...");
+            WriteLine("\nPress any key to continue...");
             ReadKey(intercept: true);
         }
     }
@@ -79,45 +79,45 @@ internal static class Program
         switch (input)
         {
             case "1": choice = Choice.Rock; return true;
-            case "2": choice = Choice.Scissors; return true;
-            case "3": choice = Choice.Paper; return true;
+            case "2": choice = Choice.Paper; return true;
+            case "3": choice = Choice.Scissors; return true;
             default: choice = default; return false;
         }
     }
 
     private static void ShowScoreboard(GameSession session, int targetWins)
     {
-        var target = targetWins == int.MaxValue ? "uendelig" : $"først til {targetWins}";
-        WriteLine($"=== Stein, Saks, Papir ({target}) ===");
-        WriteLine($"Runder: {session.RoundsPlayed}   Du: {session.PlayerScore}   PC: {session.ComputerScore}   Uavgjort: {session.Ties}   Win rate: {session.WinRate:0.#}%");
+        var target = targetWins == int.MaxValue ? "endless" : $"first to {targetWins}";
+        WriteLine($"=== Rock, Paper, Scissors ({target}) ===");
+        WriteLine($"Rounds: {session.RoundsPlayed}   You: {session.PlayerScore}   PC: {session.ComputerScore}   Ties: {session.Ties}   Win rate: {session.WinRate:0.#}%");
     }
 
     private static void ShowRoundResult(Round round)
     {
-        WriteLine($"\nDu valgte {ChoiceLabel(round.Player)}, PC valgte {ChoiceLabel(round.Computer)}.");
+        WriteLine($"\nYou chose {ChoiceLabel(round.Player)}, PC chose {ChoiceLabel(round.Computer)}.");
 
         switch (round.Outcome)
         {
             case Outcome.PlayerWin:
-                WriteWithColor("Du vant!", ConsoleColor.Green);
+                WriteWithColor("You win!", ConsoleColor.Green);
                 break;
             case Outcome.ComputerWin:
-                WriteWithColor("Du tapte!", ConsoleColor.Red);
+                WriteWithColor("You lose!", ConsoleColor.Red);
                 break;
             case Outcome.Tie:
-                WriteWithColor("Uavgjort!", ConsoleColor.Yellow);
+                WriteWithColor("Tie!", ConsoleColor.Yellow);
                 break;
         }
     }
 
     private static void ShowSummary(GameSession session, int targetWins)
     {
-        Clear();
-        WriteLine("=== Sluttsammendrag ===\n");
+        SafeClear();
+        WriteLine("=== Final summary ===\n");
 
         if (session.RoundsPlayed == 0)
         {
-            WriteLine("Ingen runder spilt.");
+            WriteLine("No rounds played.");
             return;
         }
 
@@ -125,27 +125,27 @@ internal static class Program
         {
             if (session.PlayerScore >= targetWins)
             {
-                WriteWithColor($"Du vant matchen {session.PlayerScore}–{session.ComputerScore}!", ConsoleColor.Green);
+                WriteWithColor($"You won the match {session.PlayerScore}–{session.ComputerScore}!", ConsoleColor.Green);
             }
             else if (session.ComputerScore >= targetWins)
             {
-                WriteWithColor($"PC vant matchen {session.ComputerScore}–{session.PlayerScore}.", ConsoleColor.Red);
+                WriteWithColor($"PC won the match {session.ComputerScore}–{session.PlayerScore}.", ConsoleColor.Red);
             }
         }
 
         WriteLine();
-        WriteLine($"Runder spilt: {session.RoundsPlayed}");
-        WriteLine($"Seire:        {session.PlayerScore}");
-        WriteLine($"Tap:          {session.ComputerScore}");
-        WriteLine($"Uavgjort:     {session.Ties}");
-        WriteLine($"Win rate:     {session.WinRate:0.#}%");
+        WriteLine($"Rounds played: {session.RoundsPlayed}");
+        WriteLine($"Wins:          {session.PlayerScore}");
+        WriteLine($"Losses:        {session.ComputerScore}");
+        WriteLine($"Ties:          {session.Ties}");
+        WriteLine($"Win rate:      {session.WinRate:0.#}%");
     }
 
     private static string ChoiceLabel(Choice choice) => choice switch
     {
-        Choice.Rock => "stein",
-        Choice.Scissors => "saks",
-        Choice.Paper => "papir",
+        Choice.Rock => "rock",
+        Choice.Paper => "paper",
+        Choice.Scissors => "scissors",
         _ => "?"
     };
 
